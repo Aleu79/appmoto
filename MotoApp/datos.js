@@ -6,19 +6,51 @@ const agregarDatos = () => {
 
   const datosDeMotos = {
     Ducati: {
-        nombre: "Ducati Panigale v4s",
-        modelo: "Modelo1",
-        año: "2024",
-        cilindrada: "1000cc",
+      Moto1: {
+        nombre: "Ducati Panigale V4",
+        modelo: "Panigale V4",
+        año: "2020",
+        motor: "1100cc",
         color: "Rojo"
       },
-      BMW: {
-        nombre: "BMW gs",
-        modelo: "Model2",
-        año: "2024",
-        cilindrada: "122cc",
-        color: "Azul"
+      Moto2: {
+        nombre: "Ducati Monster 821",
+        modelo: "Monster 821",
+        año: "2021",
+        motor: "821cc",
+        color: "Negro"
+      },
+      Moto3: {
+        nombre: "Ducati Multistrada 950",
+        modelo: "Multistrada 950",
+        año: "2022",
+        motor: "937cc",
+        color: "Blanco"
       }
+    },
+    BMW: {
+      Moto1: {
+        nombre: "BMW S1000RR",
+        modelo: "S1000RR",
+        año: "2020",
+        motor: "999cc",
+        color: "Azul"
+      },
+      Moto2: {
+        nombre: "BMW R1250GS",
+        modelo: "R1250GS",
+        año: "2021",
+        motor: "1254cc",
+        color: "Amarillo"
+      },
+      Moto3: {
+        nombre: "BMW F900R",
+        modelo: "F900R",
+        año: "2022",
+        motor: "895cc",
+        color: "Rojo"
+      }
+    }
   };
 
   set(motosRef, datosDeMotos)

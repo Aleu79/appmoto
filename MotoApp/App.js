@@ -1,47 +1,99 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, FlatList } from 'react-native';
 import { database } from './firebaseConfig';
 import { ref, get } from "firebase/database";
 import agregarDatos from './datos';
 
 export default function App() {
-  const [nombreMoto, setNombreMoto] = useState('');
-  const [datosMoto, setDatosMoto] = useState(null);
+  const [marcas, setMarcas] = useState([]);
+  const [modelos, setModelos] = useState([]);
+  const [motoSeleccionada, setMotoSeleccionada] = useState(null);
+  const [añoMoto, setAñoMoto] = useState('');
 
   useEffect(() => {
     agregarDatos(); // Ejecuta el script para agregar datos al iniciar la aplicación
+    fetchMarcas();
   }, []);
 
-  const obtenerDatosMoto = () => {
-    const motoRef = ref(database, `motos/${nombreMoto}`);
-    get(motoRef).then((snapshot) => {
+  const fetchMarcas = () => {
+    const motosRef = ref(database, 'motos');
+    get(motosRef).then((snapshot) => {
       if (snapshot.exists()) {
-        setDatosMoto(snapshot.val());
+        setMarcas(Object.keys(snapshot.val()));
       } else {
-        setDatosMoto(null);
-        alert('No hay datos disponibles para esta moto');
+        alert('No hay datos disponibles');
       }
     }).catch((error) => {
       console.error(error);
     });
   };
 
+  const fetchModelos = (marca) => {
+    const marcaRef = ref(database, `motos/${marca}`);
+    get(marcaRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        setModelos(Object.values(snapshot.val()));
+      } else {
+        alert('No hay datos disponibles para esta marca');
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+
+  const mostrarMoto = (moto) => {
+    setMotoSeleccionada(moto);
+  };
+
+  const obtenerAñoMoto = () => {
+    if (motoSeleccionada) {
+      alert(`El año de la moto ${motoSeleccionada.nombre} es ${motoSeleccionada.año}`);
+    } else {
+      alert('No has seleccionado una moto');
+    }
+  };
+
   return (
     <View style={styles.contenedor}>
-      <Text>Ingresa el Nombre de la Moto:</Text>
-      <TextInput
-        style={styles.entrada}
-        value={nombreMoto}
-        onChangeText={setNombreMoto}
-      />
-      <Button title="Buscar" onPress={obtenerDatosMoto} />
-      {datosMoto && (
-        <View style={styles.datosMoto}>
-          <Text>Nombre: {datosMoto.nombre}</Text>
-          <Text>Modelo: {datosMoto.modelo}</Text>
-          <Text>Año: {datosMoto.año}</Text>
-          <Text>Cilindrada: {datosMoto.Cilindrada}</Text>
-          <Text>Color: {datosMoto.color}</Text>
+      {!motoSeleccionada ? (
+        <>
+          <Text style={styles.titulo}>Marcas de Motos</Text>
+          <FlatList
+            data={marcas}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.botonMarca} onPress={() => fetchModelos(item)}>
+                <Text style={styles.textoMarca}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+          />
+
+          {modelos.length > 0 && (
+            <>
+              <Text style={styles.titulo}>Modelos de {modelos[0].marca}</Text>
+              <FlatList
+                data={modelos}
+                renderItem={({ item }) => (
+                  <TouchableOpacity style={styles.botonModelo} onPress={() => mostrarMoto(item)}>
+                    <Text style={styles.textoModelo}>{item.nombre}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.nombre}
+              />
+            </>
+          )}
+        </>
+      ) : (
+        <View style={styles.contenedorMoto}>
+          <Text style={styles.titulo}>{motoSeleccionada.nombre}</Text>
+          <TextInput
+            style={styles.entrada}
+            placeholder="Ingrese el año de la moto"
+            value={añoMoto}
+            onChangeText={setAñoMoto}
+          />
+          <Button title="Ver Año" onPress={obtenerAñoMoto} />
+          <Button title="Volver" onPress={() => setMotoSeleccionada(null)} />
         </View>
       )}
     </View>
@@ -54,14 +106,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
   },
+  titulo: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+  botonMarca: {
+    backgroundColor: 'lightblue',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  textoMarca: {
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  botonModelo: {
+    backgroundColor: 'lightgreen',
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  textoModelo: {
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  contenedorMoto: {
+    alignItems: 'center',
+  },
   entrada: {
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
-  },
-  datosMoto: {
-    marginTop: 20,
+    width: '80%',
   },
 });
