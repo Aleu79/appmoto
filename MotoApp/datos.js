@@ -1,65 +1,22 @@
+import { ref, set } from 'firebase/database';
 import { database } from './firebaseConfig';
-import { ref, set } from "firebase/database";
 
 const agregarDatos = () => {
-  const motosRef = ref(database, 'motos');
-
-  const datosDeMotos = {
-    Ducati: {
-      Moto1: {
-        nombre: "Ducati Panigale V4",
-        modelo: "Panigale V4",
-        año: "2020",
-        motor: "1100cc",
-        color: "Rojo"
-      },
-      Moto2: {
-        nombre: "Ducati Monster 821",
-        modelo: "Monster 821",
-        año: "2021",
-        motor: "821cc",
-        color: "Negro"
-      },
-      Moto3: {
-        nombre: "Ducati Multistrada 950",
-        modelo: "Multistrada 950",
-        año: "2022",
-        motor: "937cc",
-        color: "Blanco"
-      }
-    },
-    BMW: {
-      Moto1: {
-        nombre: "BMW S1000RR",
-        modelo: "S1000RR",
-        año: "2020",
-        motor: "999cc",
-        color: "Azul"
-      },
-      Moto2: {
-        nombre: "BMW R1250GS",
-        modelo: "R1250GS",
-        año: "2021",
-        motor: "1254cc",
-        color: "Amarillo"
-      },
-      Moto3: {
-        nombre: "BMW F900R",
-        modelo: "F900R",
-        año: "2022",
-        motor: "895cc",
-        color: "Rojo"
-      }
-    }
-  };
-
-  set(motosRef, datosDeMotos)
-    .then(() => {
-      console.log('Datos agregados exitosamente');
-    })
-    .catch((error) => {
-      console.error('Error al agregar datos: ', error);
-    });
+  set(ref(database, 'motos/bmw'), {
+    1: { nombre: 'S1000RR', modelo: 'Deportivo', año: '2024', motor: '1000cc', color: 'Rojo' },
+    2: { nombre: 'R1250GS', modelo: 'Aventura', año: '2024', motor: '1250cc', color: 'Azul' },
+    3: { nombre: 'F850GS', modelo: 'Aventura', año: '2024', motor: '850cc', color: 'Negro' }
+  });
+  set(ref(database, 'motos/ducati'), {
+    1: { nombre: 'Panigale V4', modelo: 'Deportivo', año: '2024', motor: '1100cc', color: 'Rojo' },
+    2: { nombre: 'Monster 821', modelo: 'Naked', año: '2024', motor: '821cc', color: 'Negro' },
+    3: { nombre: 'Scrambler 1100', modelo: 'Scrambler', año: '2024', motor: '1100cc', color: 'Amarillo' }
+  });
+  set(ref(database, 'motos/honda'), {
+    1: { nombre: 'CBR1000RR', modelo: 'Deportivo', año: '2024', motor: '1000cc', color: 'Rojo' },
+    2: { nombre: 'Africa Twin', modelo: 'Aventura', año: '2024', motor: '1100cc', color: 'Blanco' },
+    3: { nombre: 'CB500X', modelo: 'Aventura', año: '2024', motor: '500cc', color: 'Negro' }
+  });
 };
 
 export default agregarDatos;

@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, FlatList } from 'react-native';
 import { database } from './firebaseConfig';
@@ -14,7 +15,8 @@ export default function App() {
   }, []);
 
   const fetchModelos = () => {
-    const marcaRef = ref(database, `motos/${marca}`);
+    const lowerCaseMarca = marca.toLowerCase();
+    const marcaRef = ref(database, `motos/${lowerCaseMarca}`);
     get(marcaRef).then((snapshot) => {
       if (snapshot.exists()) {
         setModelos(Object.values(snapshot.val()));
